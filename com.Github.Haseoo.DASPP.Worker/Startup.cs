@@ -71,7 +71,7 @@ namespace com.Github.Haseoo.DASPP.Worker
             if (!response.IsSuccessful)
             {
                 logger.LogError($"Could not register worker: {response.StatusCode} {response.StatusDescription}");
-                Environment.Exit(-1);
+               // Environment.Exit(-1);
             }
             else
             {
