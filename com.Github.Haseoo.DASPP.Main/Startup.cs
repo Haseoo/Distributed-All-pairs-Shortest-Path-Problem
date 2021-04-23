@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using com.Github.Haseoo.DASPP.Main.Infrastructure.Service;
 using com.Github.Haseoo.DASPP.Main.Providers.Service;
 using Microsoft.AspNetCore.Builder;
@@ -23,7 +24,32 @@ namespace com.Github.Haseoo.DASPP.Main
         {
             services.AddControllers();
             services.AddSwaggerGen(options =>
-                options.SwaggerDoc("v1", new OpenApiInfo { Title = Configuration["ProjectTitle"], Version = "v1" }));
+            {
+                options.SwaggerDoc("v1", new OpenApiInfo {Title = Configuration["ProjectTitle"], Version = "v1"});
+
+                options.AddSecurityDefinition("ApiKey", new OpenApiSecurityScheme()
+                {
+                    Name = "x-api-key",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Description = "Authorization by x-api-key inside request's header",
+                    Scheme = "ApiKeyScheme"
+                });
+
+                var key = new OpenApiSecurityScheme()
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "ApiKey"
+                    },
+                    In = ParameterLocation.Header
+                };
+                options.AddSecurityRequirement( new OpenApiSecurityRequirement
+                {
+                    { key, new List<string>() }
+                });
+            });
             services.AddSingleton<IWorkerHostService, WorkerHostService>();
         }
 
@@ -34,7 +60,6 @@ namespace com.Github.Haseoo.DASPP.Main
             {
                 app.UseDeveloperExceptionPage();
             }
-
             app.UseSwagger();
             app.UseSwaggerUI(options =>
                 options.SwaggerEndpoint("/swagger/v1/swagger.json", Configuration["ProjectTitle"]));
