@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using RestSharp;
 using System;
 using System.Linq;
+using Constants = com.Github.Haseoo.DASPP.Worker.CoreData.Constants;
 
 namespace com.Github.Haseoo.DASPP.Worker
 {
@@ -57,7 +58,7 @@ namespace com.Github.Haseoo.DASPP.Worker
             });
         }
 
-        private void RegisterSelf(IApplicationBuilder app, ILogger<Startup> logger)
+        private void RegisterSelf(IApplicationBuilder app, ILogger logger)
         {
             var hostInfo = new WorkerHostInfo()
             {
@@ -65,34 +66,36 @@ namespace com.Github.Haseoo.DASPP.Worker
                 CoreCount = Environment.ProcessorCount
             };
             var client = new RestClient();
+            client.AddDefaultHeader(Constants.ApiKeyName, Configuration["ApiKey"]);
             var request = new RestRequest(Configuration["RegisterUri"]);
             request.AddJsonBody(hostInfo);
             var response = client.Post(request);
             if (!response.IsSuccessful)
             {
-                logger.LogError($"Could not register worker: {response.StatusCode} {response.StatusDescription}");
-               // Environment.Exit(-1);
+                logger?.LogError($"Could not register worker: {response.StatusCode} {response.StatusDescription}");
+                // Environment.Exit(-1);
             }
             else
             {
-                logger.LogInformation("Successfully registered!");
+                logger?.LogInformation("Successfully registered!");
             }
         }
 
-        private void DeregisterSelf(IApplicationBuilder app, ILogger<Startup> logger)
+        private void DeregisterSelf(IApplicationBuilder app, ILogger logger)
         {
             var uri = app.ServerFeatures.Get<IServerAddressesFeature>().Addresses.First();
             var client = new RestClient();
+            client.AddDefaultHeader(Constants.ApiKeyName, Configuration["ApiKey"]);
             var request = new RestRequest(Configuration["RegisterUri"]);
             request.AddOrUpdateParameter("uri", uri);
             var response = client.Delete(request);
             if (!response.IsSuccessful)
             {
-                logger.LogError($"Could not deregister worker: {response.StatusCode} {response.StatusDescription}");
+                logger?.LogError($"Could not deregister worker: {response.StatusCode} {response.StatusDescription}");
             }
             else
             {
-                logger.LogInformation("Successfully deregistered!");
+                logger?.LogInformation("Successfully deregistered!");
             }
         }
     }

@@ -1,12 +1,13 @@
-using System.Collections.Generic;
 using com.Github.Haseoo.DASPP.Main.Infrastructure.Service;
 using com.Github.Haseoo.DASPP.Main.Providers.Service;
+using com.Github.Haseoo.DASPP.Worker.CoreData;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using System.Collections.Generic;
 
 namespace com.Github.Haseoo.DASPP.Main
 {
@@ -25,11 +26,11 @@ namespace com.Github.Haseoo.DASPP.Main
             services.AddControllers();
             services.AddSwaggerGen(options =>
             {
-                options.SwaggerDoc("v1", new OpenApiInfo {Title = Configuration["ProjectTitle"], Version = "v1"});
+                options.SwaggerDoc("v1", new OpenApiInfo { Title = Configuration["ProjectTitle"], Version = "v1" });
 
                 options.AddSecurityDefinition("ApiKey", new OpenApiSecurityScheme()
                 {
-                    Name = "x-api-key",
+                    Name = Constants.ApiKeyName,
                     In = ParameterLocation.Header,
                     Type = SecuritySchemeType.ApiKey,
                     Description = "Authorization by x-api-key inside request's header",
@@ -45,7 +46,7 @@ namespace com.Github.Haseoo.DASPP.Main
                     },
                     In = ParameterLocation.Header
                 };
-                options.AddSecurityRequirement( new OpenApiSecurityRequirement
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
                     { key, new List<string>() }
                 });

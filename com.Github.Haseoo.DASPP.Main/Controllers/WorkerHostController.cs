@@ -1,5 +1,5 @@
-﻿using System;
-using com.Github.Haseoo.DASPP.Main.Infrastructure.Service;
+﻿using com.Github.Haseoo.DASPP.Main.Infrastructure.Service;
+using com.Github.Haseoo.DASPP.Main.Security;
 using com.Github.Haseoo.DASPP.Worker.CoreData.Dtos;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,6 +23,7 @@ namespace com.Github.Haseoo.DASPP.Main.Controllers
         }
 
         [HttpPost]
+        [ProtectedByApiKey]
         public IActionResult RegisterWorker(WorkerHostInfo info)
         {
             _iWorkerHostService.RegisterWorker(info);
@@ -30,6 +31,7 @@ namespace com.Github.Haseoo.DASPP.Main.Controllers
         }
 
         [HttpDelete]
+        [ProtectedByApiKey]
         public IActionResult DeRegisterWorker(string uri)
         {
             _iWorkerHostService.DeregisterWorker(uri);
