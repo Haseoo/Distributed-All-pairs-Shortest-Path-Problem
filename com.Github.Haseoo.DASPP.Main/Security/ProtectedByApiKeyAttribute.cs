@@ -1,4 +1,5 @@
 ﻿using com.Github.Haseoo.DASPP.CoreData;
+using com.Github.Haseoo.DASPP.CoreData.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
@@ -17,10 +18,9 @@ namespace com.Github.Haseoo.DASPP.Main.Security
             if (!context.HttpContext.Request.Headers.TryGetValue
                 (Constants.ApiKeyName, out var extractedApiKey))
             {
-                context.Result = new ContentResult()
+                context.Result = new ObjectResult(new ErrorResponse("Api Key was not provided"))
                 {
-                    StatusCode = 401,
-                    Content = "Api Key was not provided"
+                    StatusCode = 401
                 };
                 return;
             }
@@ -28,10 +28,9 @@ namespace com.Github.Haseoo.DASPP.Main.Security
             var apiKey = configuration["ApiKey"];
             if (!apiKey.Equals(extractedApiKey))
             {
-                context.Result = new ContentResult()
+                context.Result = new ObjectResult(new ErrorResponse("Api Key is not Valid"))
                 {
-                    StatusCode = 401,
-                    Content = "Api Key is not valid"
+                    StatusCode = 401
                 };
                 return;
             }

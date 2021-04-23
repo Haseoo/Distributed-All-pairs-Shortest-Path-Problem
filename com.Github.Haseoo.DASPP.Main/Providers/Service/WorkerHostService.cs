@@ -1,7 +1,7 @@
-﻿using com.Github.Haseoo.DASPP.Main.Infrastructure.Service;
-using com.Github.Haseoo.DASPP.CoreData.Dtos;
+﻿using com.Github.Haseoo.DASPP.CoreData.Dtos;
+using com.Github.Haseoo.DASPP.Main.Exceptions.Workers;
+using com.Github.Haseoo.DASPP.Main.Infrastructure.Service;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
@@ -21,7 +21,7 @@ namespace com.Github.Haseoo.DASPP.Main.Providers.Service
         {
             if (!_registeredWorkers.ContainsKey(uri))
             {
-                throw new Exception("TODO worker key does not exist"); //TODO
+                throw new WorkerDoesNotExistException(uri);
             }
             _registeredWorkers.Remove(uri);
             _logger.LogInformation($"Deregistered {uri} worker");
@@ -34,6 +34,10 @@ namespace com.Github.Haseoo.DASPP.Main.Providers.Service
 
         public void RegisterWorker(WorkerHostInfo info)
         {
+            if (_registeredWorkers.ContainsKey(info.Uri))
+            {
+                throw new WorkerAlreadyRegisteredException(info.Uri);
+            }
             _registeredWorkers.Add(info.Uri, info);
             _logger.LogInformation($"Registered {info.Uri} worker");
         }
