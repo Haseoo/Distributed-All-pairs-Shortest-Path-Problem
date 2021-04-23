@@ -1,5 +1,5 @@
 ﻿using com.Github.Haseoo.DASPP.Main.Infrastructure.Service;
-using com.Github.Haseoo.DASPP.Worker.CoreData.Dtos;
+using com.Github.Haseoo.DASPP.CoreData.Dtos;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;

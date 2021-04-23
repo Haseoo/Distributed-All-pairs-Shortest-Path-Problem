@@ -1,6 +1,6 @@
 using com.Github.Haseoo.DASPP.Main.Infrastructure.Service;
 using com.Github.Haseoo.DASPP.Main.Providers.Service;
-using com.Github.Haseoo.DASPP.Worker.CoreData;
+using com.Github.Haseoo.DASPP.CoreData;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;

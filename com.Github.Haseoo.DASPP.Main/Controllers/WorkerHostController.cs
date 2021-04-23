@@ -1,6 +1,6 @@
 ﻿using com.Github.Haseoo.DASPP.Main.Infrastructure.Service;
 using com.Github.Haseoo.DASPP.Main.Security;
-using com.Github.Haseoo.DASPP.Worker.CoreData.Dtos;
+using com.Github.Haseoo.DASPP.CoreData.Dtos;
 using Microsoft.AspNetCore.Mvc;
 
 namespace com.Github.Haseoo.DASPP.Main.Controllers

@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "com.Github.Haseoo.DASPP.Mai
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "com.Github.Haseoo.DASPP.Worker", "com.Github.Haseoo.DASPP.Worker\com.Github.Haseoo.DASPP.Worker.csproj", "{7F20734C-85CD-4F88-B28D-7086CB8D8248}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "com.Github.Haseoo.DASPP.Worker.CoreData", "com.Github.Haseoo.DASPP.Worker.CoreData\com.Github.Haseoo.DASPP.Worker.CoreData.csproj", "{D3070C70-ACFA-4E35-A8C1-A91AA5D2F0B4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "com.Github.Haseoo.DASPP.CoreData", "com.Github.Haseoo.DASPP.CoreData\com.Github.Haseoo.DASPP.CoreData.csproj", "{D3070C70-ACFA-4E35-A8C1-A91AA5D2F0B4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

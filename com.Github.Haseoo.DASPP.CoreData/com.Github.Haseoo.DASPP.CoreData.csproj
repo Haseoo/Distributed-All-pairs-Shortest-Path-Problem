@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AssemblyName>com.Github.Haseoo.DASPP.CoreData</AssemblyName>
+    <RootNamespace>com.Github.Haseoo.DASPP.CoreData</RootNamespace>
   </PropertyGroup>
 
 </Project>

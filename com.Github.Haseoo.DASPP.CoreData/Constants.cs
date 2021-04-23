@@ -1,4 +1,4 @@
-﻿namespace com.Github.Haseoo.DASPP.Worker.CoreData
+﻿namespace com.Github.Haseoo.DASPP.CoreData
 {
     public static class Constants
     {

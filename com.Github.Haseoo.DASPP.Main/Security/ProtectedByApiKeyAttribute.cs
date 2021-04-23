@@ -1,4 +1,4 @@
-﻿using com.Github.Haseoo.DASPP.Worker.CoreData;
+﻿using com.Github.Haseoo.DASPP.CoreData;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;

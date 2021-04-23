@@ -1,4 +1,4 @@
-using com.Github.Haseoo.DASPP.Worker.CoreData.Dtos;
+using com.Github.Haseoo.DASPP.CoreData.Dtos;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server.Features;
@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 using RestSharp;
 using System;
 using System.Linq;
-using Constants = com.Github.Haseoo.DASPP.Worker.CoreData.Constants;
+using Constants = com.Github.Haseoo.DASPP.CoreData.Constants;
 
 namespace com.Github.Haseoo.DASPP.Worker
 {

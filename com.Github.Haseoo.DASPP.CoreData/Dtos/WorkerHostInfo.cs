@@ -1,4 +1,4 @@
-﻿namespace com.Github.Haseoo.DASPP.Worker.CoreData.Dtos
+﻿namespace com.Github.Haseoo.DASPP.CoreData.Dtos
 {
     public class WorkerHostInfo
     {

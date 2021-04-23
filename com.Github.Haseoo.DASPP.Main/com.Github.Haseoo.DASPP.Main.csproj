@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\com.Github.Haseoo.DASPP.Worker.CoreData\com.Github.Haseoo.DASPP.Worker.CoreData.csproj" />
+    <ProjectReference Include="..\com.Github.Haseoo.DASPP.CoreData\com.Github.Haseoo.DASPP.CoreData.csproj" />
   </ItemGroup>
 
 
