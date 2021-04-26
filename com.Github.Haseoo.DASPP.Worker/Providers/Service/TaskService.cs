@@ -27,7 +27,7 @@ namespace com.Github.Haseoo.DASPP.Worker.Providers.Service
 
         public void RemoveGraph(Guid graphGuid)
         {
-            if (_graphHelpers.ContainsKey(graphGuid))
+            if (!_graphHelpers.ContainsKey(graphGuid))
             {
                 throw new SessionNotStarted("Session has not been started");
             }
