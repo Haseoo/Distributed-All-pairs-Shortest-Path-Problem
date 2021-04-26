@@ -1,6 +1,7 @@
 ﻿using com.Github.Haseoo.DASPP.CoreData.Dtos;
 using com.Github.Haseoo.DASPP.Worker.Exceptions;
 using com.Github.Haseoo.DASPP.Worker.Infrastructure.Service;
+using com.Github.Haseoo.DASPP.Worker.Providers.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -14,11 +15,16 @@ namespace com.Github.Haseoo.DASPP.Worker.Controllers
     [Route("/api/graph")]
     public class TaskController : Controller
     {
-        private readonly ITaskService workerService;
+        private readonly ITaskService _iTaskService;
+
+        public TaskController(ITaskService workerService)
+        {
+            this._iTaskService = workerService;
+        }
 
         public IActionResult BeginTask(GraphDto graph)
         {
-            var guid = workerService.AddGraph(graph);
+            var guid = _iTaskService.AddGraph(graph);
             HttpContext.Response.Cookies.Append("sessionId", guid.ToString(), new CookieOptions() { HttpOnly = true });
             return NoContent();
         }
@@ -32,7 +38,7 @@ namespace com.Github.Haseoo.DASPP.Worker.Controllers
             {
                 throw new ArgumentException("Invalid session id");
             }
-            workerService.RemoveGraph(guid);
+            _iTaskService.RemoveGraph(guid);
             return NoContent();
         }
     }

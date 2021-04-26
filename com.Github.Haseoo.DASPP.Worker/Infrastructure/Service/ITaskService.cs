@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace com.Github.Haseoo.DASPP.Worker.Infrastructure.Service
 {
-    public interface IWorkerService
+    public interface ITaskService
     {
         Guid AddGraph(GraphDto graph);
         void RemoveGraph(Guid graphId);
