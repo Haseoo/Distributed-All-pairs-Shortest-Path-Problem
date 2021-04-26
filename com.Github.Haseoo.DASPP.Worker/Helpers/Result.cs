@@ -1,11 +1,11 @@
-﻿namespace com.Github.Haseoo.DASPP.CoreData.Dtos
+﻿namespace com.Github.Haseoo.DASPP.Worker.Helpers
 {
-    public class ResultDto
+    public class Result
     {
         public int RoadCost { get; set; }
         public int Vertex { get; set; }
 
-        public ResultDto(int roadCost, int vertex)
+        public Result(int roadCost, int vertex)
         {
             RoadCost = roadCost;
             Vertex = vertex;

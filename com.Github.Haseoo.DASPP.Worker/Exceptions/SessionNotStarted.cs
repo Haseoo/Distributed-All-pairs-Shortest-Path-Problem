@@ -1,9 +1,6 @@
 ﻿using com.Github.Haseoo.DASPP.CoreData.Exceptions;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Threading.Tasks;
 
 namespace com.Github.Haseoo.DASPP.Worker.Exceptions
 {
@@ -11,7 +8,6 @@ namespace com.Github.Haseoo.DASPP.Worker.Exceptions
     {
         public SessionNotStarted() : base("Session has not been started")
         {
-
         }
 
         public SessionNotStarted(string message) : base(message)

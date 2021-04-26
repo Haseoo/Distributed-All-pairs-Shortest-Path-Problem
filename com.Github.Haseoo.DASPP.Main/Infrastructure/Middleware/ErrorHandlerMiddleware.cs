@@ -1,13 +1,12 @@
 ﻿using com.Github.Haseoo.DASPP.CoreData.Dtos;
 using com.Github.Haseoo.DASPP.CoreData.Exceptions;
-using com.Github.Haseoo.DASPP.Main.Exceptions;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace com.Github.Haseoo.DASPP.Main.Infrastructure.Moddleware
+namespace com.Github.Haseoo.DASPP.Main.Infrastructure.Middleware
 {
     public class ErrorHandlerMiddleware
     {

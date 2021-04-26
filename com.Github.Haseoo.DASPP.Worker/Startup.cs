@@ -1,5 +1,5 @@
 using com.Github.Haseoo.DASPP.CoreData.Dtos;
-using com.Github.Haseoo.DASPP.Worker.Controllers;
+using com.Github.Haseoo.DASPP.Worker.Infrastructure.Middleware;
 using com.Github.Haseoo.DASPP.Worker.Infrastructure.Service;
 using com.Github.Haseoo.DASPP.Worker.Providers.Service;
 using Microsoft.AspNetCore.Builder;
@@ -46,6 +46,8 @@ namespace com.Github.Haseoo.DASPP.Worker
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseMiddleware<ErrorHandlerMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

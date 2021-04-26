@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace com.Github.Haseoo.DASPP.Worker.Helpers
 {
@@ -12,14 +11,6 @@ namespace com.Github.Haseoo.DASPP.Worker.Helpers
         private readonly int _graphSize;
         public Guid Id { get; private set; }
 
-        private class Element
-        {
-            public int Distance { get; set; }
-            public bool IsCounted { get; set; }
-            public int Previous { get; set; }
-        }
-
-
         public GraphHelper(GraphDto graphDto)
         {
             _graphDto = graphDto;
@@ -27,14 +18,14 @@ namespace com.Github.Haseoo.DASPP.Worker.Helpers
             Id = Guid.NewGuid();
         }
 
-        public ResultDto FindShortestPathVertex(List<int> vertices)
+        public Result FindShortestPathVertex(List<int> vertices)
         {
-            var results = new List<ResultDto>();
+            var results = new List<Result>();
 
-            ResultDto bestVertex = new ResultDto(int.MaxValue, -1);
+            Result bestVertex = new Result(int.MaxValue, -1);
             foreach (var item in vertices)
             {
-                results.Add(new ResultDto(Dijkstra(item), item));
+                results.Add(new Result(Dijkstra(item), item));
             }
 
             //Console.WriteLine("All results: ");
@@ -59,7 +50,6 @@ namespace com.Github.Haseoo.DASPP.Worker.Helpers
                 elements[i].IsCounted = false;
             }
             elements[vertex].Distance = 0;
-
 
             while (elements.Any(x => x.IsCounted == false))
             {
@@ -93,6 +83,7 @@ namespace com.Github.Haseoo.DASPP.Worker.Helpers
         {
             return (_graphDto[vertexA, vertexB] > 0);
         }
+
         private int Length(int vertex_u, int vertex_v)
         {
             return _graphDto[vertex_u, vertex_v];
@@ -110,6 +101,7 @@ namespace com.Github.Haseoo.DASPP.Worker.Helpers
                 }
             }
         }
+
         private int FindMinDistanceElement(List<Element> elements)
         {
             var element = new Element() { Distance = int.MaxValue };
