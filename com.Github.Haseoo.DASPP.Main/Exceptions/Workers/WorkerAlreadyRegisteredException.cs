@@ -1,4 +1,5 @@
-﻿using System;
+﻿using com.Github.Haseoo.DASPP.CoreData.Exceptions;
+using System;
 using System.Runtime.Serialization;
 
 namespace com.Github.Haseoo.DASPP.Main.Exceptions.Workers

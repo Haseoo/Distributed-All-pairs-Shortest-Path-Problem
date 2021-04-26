@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace com.Github.Haseoo.DASPP.Main.Exceptions
+namespace com.Github.Haseoo.DASPP.CoreData.Exceptions
 {
     [Serializable]
     public class NotFoundException : Exception

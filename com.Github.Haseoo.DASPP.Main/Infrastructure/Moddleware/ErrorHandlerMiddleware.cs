@@ -1,4 +1,5 @@
 ﻿using com.Github.Haseoo.DASPP.CoreData.Dtos;
+using com.Github.Haseoo.DASPP.CoreData.Exceptions;
 using com.Github.Haseoo.DASPP.Main.Exceptions;
 using Microsoft.AspNetCore.Http;
 using System;
