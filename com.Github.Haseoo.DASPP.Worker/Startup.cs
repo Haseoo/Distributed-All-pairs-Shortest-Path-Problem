@@ -1,4 +1,7 @@
 using com.Github.Haseoo.DASPP.CoreData.Dtos;
+using com.Github.Haseoo.DASPP.Worker.Controllers;
+using com.Github.Haseoo.DASPP.Worker.Infrastructure.Service;
+using com.Github.Haseoo.DASPP.Worker.Providers.Service;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server.Features;
@@ -26,6 +29,7 @@ namespace com.Github.Haseoo.DASPP.Worker
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddSingleton<ITaskService, TaskService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
