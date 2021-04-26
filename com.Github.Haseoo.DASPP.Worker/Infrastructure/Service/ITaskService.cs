@@ -8,7 +8,7 @@ namespace com.Github.Haseoo.DASPP.Worker.Infrastructure.Service
 {
     public interface ITaskService
     {
-        Guid AddGraph(GraphDto graph);
-        void RemoveGraph(Guid graphId);
+        Guid StartTask(GraphDto graph);
+        void RemoveTask(Guid graphId);
     }
 }

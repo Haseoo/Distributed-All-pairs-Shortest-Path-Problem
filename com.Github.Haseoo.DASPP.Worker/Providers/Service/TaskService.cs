@@ -15,22 +15,22 @@ namespace com.Github.Haseoo.DASPP.Worker.Providers.Service
     {
         private readonly IDictionary<Guid, GraphHelper> _graphHelpers = new ConcurrentDictionary<Guid, GraphHelper>();
 
-        public Guid AddGraph(GraphDto graph)
+        public Guid StartTask(GraphDto graph)
         {
             var helper = new GraphHelper(graph);
             if (_graphHelpers.ContainsKey(helper.Id))
             {
-                throw new SessionAlreadyExists("Session alredy exists");
+                throw new SessionAlreadyExists();
             }
             _graphHelpers.TryAdd(helper.Id, helper);
             return helper.Id;
         }
 
-        public void RemoveGraph(Guid graphGuid)
+        public void RemoveTask(Guid graphGuid)
         {
             if (!_graphHelpers.ContainsKey(graphGuid))
             {
-                throw new SessionNotStarted("Session has not been started");
+                throw new SessionNotStarted();
             }
             _graphHelpers.Remove(graphGuid);
         }

@@ -9,7 +9,7 @@ namespace com.Github.Haseoo.DASPP.Worker.Exceptions
 {
     public class SessionAlreadyExists : BadRequestException
     {
-        public SessionAlreadyExists()
+        public SessionAlreadyExists() : base("Session alredy exists")
         {
         }
 

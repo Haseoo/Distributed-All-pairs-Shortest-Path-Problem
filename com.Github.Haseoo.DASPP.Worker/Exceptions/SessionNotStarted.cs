@@ -9,8 +9,9 @@ namespace com.Github.Haseoo.DASPP.Worker.Exceptions
 {
     public class SessionNotStarted : NotFoundException
     {
-        public SessionNotStarted()
+        public SessionNotStarted() : base("Session has not been started")
         {
+
         }
 
         public SessionNotStarted(string message) : base(message)

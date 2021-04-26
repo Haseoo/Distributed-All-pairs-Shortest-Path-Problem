@@ -17,14 +17,14 @@ namespace com.Github.Haseoo.DASPP.Worker.Controllers
     {
         private readonly ITaskService _iTaskService;
 
-        public TaskController(ITaskService workerService)
+        public TaskController(ITaskService iTaskService)
         {
-            this._iTaskService = workerService;
+            this._iTaskService = iTaskService;
         }
 
         public IActionResult BeginTask(GraphDto graph)
         {
-            var guid = _iTaskService.AddGraph(graph);
+            var guid = _iTaskService.StartTask(graph);
             HttpContext.Response.Cookies.Append("sessionId", guid.ToString(), new CookieOptions() { HttpOnly = true });
             return NoContent();
         }
@@ -32,13 +32,13 @@ namespace com.Github.Haseoo.DASPP.Worker.Controllers
         {
             if (!HttpContext.Request.Cookies.TryGetValue("sessionId", out var cookie))
             {
-                throw new SessionNotStarted("Session has not been started");
+                throw new SessionNotStarted();
             }
             if (Guid.TryParse(cookie, out var guid))
             {
                 throw new ArgumentException("Invalid session id");
             }
-            _iTaskService.RemoveGraph(guid);
+            _iTaskService.RemoveTask(guid);
             return NoContent();
         }
     }
