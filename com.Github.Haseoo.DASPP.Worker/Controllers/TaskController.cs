@@ -40,7 +40,7 @@ namespace com.Github.Haseoo.DASPP.Worker.Controllers
             }
             if (!Guid.TryParse(cookie, out var guid))
             {
-                throw new ArgumentException("Invalid session id");
+                return BadRequest(new ErrorResponse("Invalid session id"));
             }
             _taskService.RemoveTask(guid);
             HttpContext.Response.Cookies.Delete(CookieKey);
