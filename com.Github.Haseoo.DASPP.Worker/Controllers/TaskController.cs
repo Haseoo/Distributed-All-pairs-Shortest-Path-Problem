@@ -12,11 +12,11 @@ namespace com.Github.Haseoo.DASPP.Worker.Controllers
     public class TaskController : Controller
     {
         private const string CookieKey = "sessionId";
-        private readonly ITaskService _iTaskService;
+        private readonly ITaskService _taskService;
 
-        public TaskController(ITaskService iTaskService)
+        public TaskController(ITaskService taskService)
         {
-            this._iTaskService = iTaskService;
+            this._taskService = taskService;
         }
 
         [HttpPost]
@@ -26,7 +26,7 @@ namespace com.Github.Haseoo.DASPP.Worker.Controllers
             {
                 throw new SessionAlreadyExists();
             }
-            var guid = _iTaskService.StartTask(graph);
+            var guid = _taskService.StartTask(graph);
             HttpContext.Response.Cookies.Append(CookieKey, guid.ToString(), new CookieOptions() { HttpOnly = true, SameSite = SameSiteMode.Strict });
             return NoContent();
         }
@@ -42,7 +42,7 @@ namespace com.Github.Haseoo.DASPP.Worker.Controllers
             {
                 throw new ArgumentException("Invalid session id");
             }
-            _iTaskService.RemoveTask(guid);
+            _taskService.RemoveTask(guid);
             HttpContext.Response.Cookies.Delete(CookieKey);
             return NoContent();
         }
