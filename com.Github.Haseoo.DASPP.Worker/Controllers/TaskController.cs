@@ -8,7 +8,7 @@ using System;
 namespace com.Github.Haseoo.DASPP.Worker.Controllers
 {
     [ApiController]
-    [Route("/api/graph")]
+    [Route("/api/task")]
     public class TaskController : Controller
     {
         private const string CookieKey = "sessionId";

@@ -9,6 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using System.Collections.Generic;
+using com.Github.Haseoo.DASPP.CoreData.Dtos;
+using FluentValidation.AspNetCore;
 
 namespace com.Github.Haseoo.DASPP.Main
 {
@@ -24,7 +26,8 @@ namespace com.Github.Haseoo.DASPP.Main
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers()
+                .AddFluentValidation(s => s.RegisterValidatorsFromAssemblyContaining<GraphDto>());
             services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new OpenApiInfo { Title = Configuration["ProjectTitle"], Version = "v1" });
