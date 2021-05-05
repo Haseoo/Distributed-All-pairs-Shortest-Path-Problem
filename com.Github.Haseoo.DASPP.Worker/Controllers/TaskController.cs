@@ -32,9 +32,9 @@ namespace com.Github.Haseoo.DASPP.Worker.Controllers
         }
 
         [HttpPut]
-            //TODO add validator!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        public IActionResult FindBestVertex(FindBestVertexRequestDto request) 
-            {
+        //TODO add validator!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        public IActionResult FindBestVertex(FindBestVertexRequestDto request)
+        {
             if (!HttpContext.Request.Cookies.TryGetValue(CookieKey, out var cookie))
             {
                 throw new SessionNotStarted();

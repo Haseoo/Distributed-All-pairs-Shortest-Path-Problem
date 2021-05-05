@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace com.Github.Haseoo.DASPP.CoreData.Dtos
 {
@@ -7,8 +6,10 @@ namespace com.Github.Haseoo.DASPP.CoreData.Dtos
     {
         [JsonPropertyName("roadCost")]
         public int RoadCost { get; set; }
+
         [JsonPropertyName("vertex")]
         public int Vertex { get; set; }
+
         [JsonPropertyName("calculatingTimeMs")]
         public int CalculatingTimeMs { get; set; }
     }

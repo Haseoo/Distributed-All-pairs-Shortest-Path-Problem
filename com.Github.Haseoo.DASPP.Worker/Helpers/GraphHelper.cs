@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 
 namespace com.Github.Haseoo.DASPP.Worker.Helpers
 {
@@ -82,7 +81,6 @@ namespace com.Github.Haseoo.DASPP.Worker.Helpers
         {
             return _graphDto[vertexU, vertexV];
         }
-
 
         private int FindMinDistanceElement(IList<Element> elements)
         {

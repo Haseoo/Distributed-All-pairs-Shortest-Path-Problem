@@ -1,13 +1,11 @@
-﻿using System;
+﻿using com.Github.Haseoo.DASPP.CoreData.Dtos;
+using com.Github.Haseoo.DASPP.Main.Dtos;
+using com.Github.Haseoo.DASPP.Main.Helper;
+using com.Github.Haseoo.DASPP.Main.Infrastructure.Service;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using com.Github.Haseoo.DASPP.CoreData.Dtos;
-using com.Github.Haseoo.DASPP.Main.Dtos;
-using com.Github.Haseoo.DASPP.Main.Helper;
-using com.Github.Haseoo.DASPP.Main.Infrastructure.Service;
-using RestSharp.Serialization.Json;
 
 namespace com.Github.Haseoo.DASPP.Main.Providers.Service
 {
@@ -46,25 +44,24 @@ namespace com.Github.Haseoo.DASPP.Main.Providers.Service
                 RoadCost = int.MaxValue
             };
 
-            while (begin <=end)
+            while (begin <= end)
             {
                 var tasks = new List<Task<ResultDto>>();
                 for (var i = 0; i < workerCount && begin <= end; i++)
                 {
-                    var task = begin + packageSize > end ? helpers[i].CalculateFor(begin, end) 
+                    var task = begin + packageSize > end ? helpers[i].CalculateFor(begin, end)
                         : helpers[i].CalculateFor(begin, begin + packageSize);
                     begin += packageSize + 1;
                     tasks.Add(task);
                 }
 
                 var results = Task.WhenAll(tasks.ToArray()).Result;
-                averageCalculationTime += (int) results.Average(e => e.CalculatingTimeMs);
+                averageCalculationTime += (int)results.Average(e => e.CalculatingTimeMs);
                 var bestPartialResult = results.OrderBy(e => e.RoadCost).FirstOrDefault();
                 if (bestPartialResult?.RoadCost < bestResult.RoadCost)
                 {
                     bestResult = bestPartialResult;
                 }
-
             }
 
             stopWatch.Stop();
