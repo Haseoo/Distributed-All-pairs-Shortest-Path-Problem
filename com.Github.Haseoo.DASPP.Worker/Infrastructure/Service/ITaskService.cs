@@ -7,6 +7,8 @@ namespace com.Github.Haseoo.DASPP.Worker.Infrastructure.Service
     {
         Guid StartTask(GraphDto graph);
 
+        ResultDto FindBestVertex(Guid graphId, int begin, int end);
+
         void RemoveTask(Guid graphId);
     }
 }

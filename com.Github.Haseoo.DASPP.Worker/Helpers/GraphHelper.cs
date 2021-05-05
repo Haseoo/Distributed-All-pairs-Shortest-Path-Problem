@@ -2,47 +2,47 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace com.Github.Haseoo.DASPP.Worker.Helpers
 {
     public class GraphHelper
     {
         private readonly GraphDto _graphDto;
-        private readonly int _graphSize;
+
         public Guid Id { get; private set; }
+
+        public int GraphSize { get; }
 
         public GraphHelper(GraphDto graphDto)
         {
             _graphDto = graphDto;
-            _graphSize = _graphDto.GraphSize;
+            GraphSize = _graphDto.GraphSize;
             Id = Guid.NewGuid();
         }
 
-        public Result FindShortestPathVertex(List<int> vertices)
+        public Result FindShortestPathVertex(IEnumerable<int> vertices)
         {
             var results = new List<Result>();
 
-            Result bestVertex = new Result(int.MaxValue, -1);
-            foreach (var item in vertices)
+            var bestVertex = new Result(int.MaxValue, -1);
+            results.AddRange(vertices.Select(item => new Result(Dijkstra(item), item)));
+            foreach (var result in
+            from result in results
+            where result.RoadCost < bestVertex.RoadCost
+            select result)
             {
-                results.Add(new Result(Dijkstra(item), item));
+                bestVertex = result;
             }
 
-            //Console.WriteLine("All results: ");
-            foreach (var result in results)
-            {
-                // Console.WriteLine($"Vertex: {result.Vertex}, road: {result.RoadCost}.");
-                if (result.RoadCost < bestVertex.RoadCost)
-                    bestVertex = result;
-            }
             return bestVertex;
         }
 
         private int Dijkstra(int vertex)
         {
-            List<Element> elements = new List<Element>();
+            var elements = new List<Element>();
 
-            for (int i = 0; i < _graphSize; i++)
+            for (var i = 0; i < GraphSize; i++)
             {
                 elements.Add(new Element());
                 elements[i].Distance = int.MaxValue;
@@ -51,13 +51,13 @@ namespace com.Github.Haseoo.DASPP.Worker.Helpers
             }
             elements[vertex].Distance = 0;
 
-            while (elements.Any(x => x.IsCounted == false))
+            while (elements.Any(x => !x.IsCounted))
             {
                 var u = FindMinDistanceElement(elements);
 
                 elements[u].IsCounted = true;
 
-                for (int i = 0; i < _graphSize; i++)
+                for (var i = 0; i < GraphSize; i++)
                 {
                     if (Adjacent(u, i) && u != i)
                     {
@@ -70,12 +70,6 @@ namespace com.Github.Haseoo.DASPP.Worker.Helpers
                 }
             }
 
-            /*for (int i = 0; i < _graphSize; i++)
-            {
-                Console.WriteLine($"{i}: d: {elements[i].distance}, p: {elements[i].previous}");
-            }
-
-            PrintResultRoad(elements);*/
             return GetDistanceSum(elements);
         }
 
@@ -84,32 +78,20 @@ namespace com.Github.Haseoo.DASPP.Worker.Helpers
             return (_graphDto[vertexA, vertexB] > 0);
         }
 
-        private int Length(int vertex_u, int vertex_v)
+        private int Length(int vertexU, int vertexV)
         {
-            return _graphDto[vertex_u, vertex_v];
+            return _graphDto[vertexU, vertexV];
         }
 
-        private void PrintResultRoad(List<Element> elements)
-        {
-            for (int i = 0; i < _graphSize; i++)
-            {
-                Stack<int> road = new Stack<int>();
-                Console.Write($"{i}: ");
-                for (int j = i; j > -1; j = elements[j].Previous)
-                {
-                    road.Push(j);
-                }
-            }
-        }
 
-        private int FindMinDistanceElement(List<Element> elements)
+        private int FindMinDistanceElement(IList<Element> elements)
         {
             var element = new Element() { Distance = int.MaxValue };
             var index = -1;
 
             foreach (var item in elements)
             {
-                if (item.Distance < element.Distance && item.IsCounted == false)
+                if (item.Distance < element.Distance && !item.IsCounted)
                 {
                     element = item;
                     index = elements.IndexOf(item);
@@ -118,16 +100,9 @@ namespace com.Github.Haseoo.DASPP.Worker.Helpers
             return index;
         }
 
-        private int GetDistanceSum(List<Element> elements)
+        private int GetDistanceSum(IEnumerable<Element> elements)
         {
-            var sum = 0;
-
-            foreach (var item in elements)
-            {
-                sum += item.Distance;
-            }
-
-            return sum;
+            return elements.Sum(item => item.Distance);
         }
     }
 }

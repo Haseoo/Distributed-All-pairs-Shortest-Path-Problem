@@ -31,6 +31,22 @@ namespace com.Github.Haseoo.DASPP.Worker.Controllers
             return NoContent();
         }
 
+        [HttpPut]
+            //TODO add validator!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        public IActionResult FindBestVertex(FindBestVertexRequestDto request) 
+            {
+            if (!HttpContext.Request.Cookies.TryGetValue(CookieKey, out var cookie))
+            {
+                throw new SessionNotStarted();
+            }
+            if (!Guid.TryParse(cookie, out var guid))
+            {
+                return BadRequest(new ErrorResponse("Invalid session id"));
+            }
+
+            return Ok(_taskService.FindBestVertex(guid, request.BeginVertexIndex, request.EndVertexIndex));
+        }
+
         [HttpDelete]
         public IActionResult CancelTask()
         {
