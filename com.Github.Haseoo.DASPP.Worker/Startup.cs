@@ -2,6 +2,7 @@ using com.Github.Haseoo.DASPP.CoreData.Dtos;
 using com.Github.Haseoo.DASPP.Worker.Infrastructure.Middleware;
 using com.Github.Haseoo.DASPP.Worker.Infrastructure.Service;
 using com.Github.Haseoo.DASPP.Worker.Providers.Service;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server.Features;
@@ -12,7 +13,6 @@ using Microsoft.Extensions.Logging;
 using RestSharp;
 using System;
 using System.Linq;
-using FluentValidation.AspNetCore;
 using Constants = com.Github.Haseoo.DASPP.CoreData.Constants;
 
 namespace com.Github.Haseoo.DASPP.Worker

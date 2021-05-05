@@ -5,6 +5,7 @@ using com.Github.Haseoo.DASPP.Worker.Infrastructure.Service;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -41,14 +42,16 @@ namespace com.Github.Haseoo.DASPP.Worker.Providers.Service
                 throw new Exception("TODO");
             }
 
+            var stopWatch = Stopwatch.StartNew();
+
             var helper = _graphHelpers[graphId];
-            begin = (begin  > helper.GraphSize) ? helper.GraphSize : begin;
+            begin = (begin > helper.GraphSize) ? helper.GraphSize : begin;
             end = (end > helper.GraphSize) ? helper.GraphSize : end;
             var vertexCount = end - begin + 1;
             var coreCount = Environment.ProcessorCount;
             var bestVertex = new Result(int.MaxValue, -1);
             var packageSize = (vertexCount / coreCount != 0) ? (vertexCount / coreCount) : 1;
-            while (begin <=end)
+            while (begin <= end)
             {
                 var tasks = new List<Task<Result>>();
                 for (var i = 0; i < coreCount && begin <= end; i++)
@@ -70,10 +73,14 @@ namespace com.Github.Haseoo.DASPP.Worker.Providers.Service
                     bestVertex = partialResult;
                 }
             }
+
+            stopWatch.Stop();
+
             return new ResultDto()
             {
                 RoadCost = bestVertex.RoadCost,
-                Vertex = bestVertex.Vertex
+                Vertex = bestVertex.Vertex,
+                CalculatingTimeMs = stopWatch.Elapsed.Milliseconds
             };
         }
 

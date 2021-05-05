@@ -1,16 +1,17 @@
 using com.Github.Haseoo.DASPP.CoreData;
+using com.Github.Haseoo.DASPP.CoreData.Dtos;
 using com.Github.Haseoo.DASPP.Main.Infrastructure.Middleware;
 using com.Github.Haseoo.DASPP.Main.Infrastructure.Service;
 using com.Github.Haseoo.DASPP.Main.Providers.Service;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using RestSharp.Serialization.Json;
 using System.Collections.Generic;
-using com.Github.Haseoo.DASPP.CoreData.Dtos;
-using FluentValidation.AspNetCore;
 
 namespace com.Github.Haseoo.DASPP.Main
 {
@@ -55,7 +56,9 @@ namespace com.Github.Haseoo.DASPP.Main
                     { key, new List<string>() }
                 });
             });
+            services.AddSingleton(new JsonDeserializer());
             services.AddSingleton<IWorkerHostService, WorkerHostService>();
+            services.AddSingleton<IGraphService, GraphService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

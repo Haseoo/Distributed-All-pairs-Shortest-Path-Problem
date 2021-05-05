@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace com.Github.Haseoo.DASPP.CoreData.Dtos
+﻿namespace com.Github.Haseoo.DASPP.CoreData.Dtos
 {
     public class FindBestVertexRequestDto
     {
