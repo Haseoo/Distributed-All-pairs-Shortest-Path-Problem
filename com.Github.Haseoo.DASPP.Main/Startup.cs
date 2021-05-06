@@ -1,5 +1,6 @@
 using com.Github.Haseoo.DASPP.CoreData;
 using com.Github.Haseoo.DASPP.CoreData.Dtos;
+using com.Github.Haseoo.DASPP.Main.Dtos.Validators;
 using com.Github.Haseoo.DASPP.Main.Infrastructure.Middleware;
 using com.Github.Haseoo.DASPP.Main.Infrastructure.Service;
 using com.Github.Haseoo.DASPP.Main.Providers.Service;
@@ -28,7 +29,9 @@ namespace com.Github.Haseoo.DASPP.Main
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers()
-                .AddFluentValidation(s => s.RegisterValidatorsFromAssemblyContaining<GraphDto>());
+                .AddFluentValidation(s =>
+                    s.RegisterValidatorsFromAssemblyContaining<GraphDto>()
+                        .RegisterValidatorsFromAssemblyContaining<MainTaskRequestDtoValidator>());
             services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new OpenApiInfo { Title = Configuration["ProjectTitle"], Version = "v1" });

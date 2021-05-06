@@ -27,13 +27,13 @@ namespace com.Github.Haseoo.DASPP.Worker.Providers.Service
             return helper.Id;
         }
 
-        public void RemoveTask(Guid graphGuid)
+        public void RemoveTask(Guid graphId)
         {
-            if (!_graphHelpers.ContainsKey(graphGuid))
+            if (!_graphHelpers.ContainsKey(graphId))
             {
                 throw new SessionNotStartedException();
             }
-            _graphHelpers.Remove(graphGuid);
+            _graphHelpers.Remove(graphId);
         }
 
         public ResultDto FindBestVertex(Guid graphId, int begin, int end)

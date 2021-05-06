@@ -1,12 +1,12 @@
 ﻿using com.Github.Haseoo.DASPP.CoreData.Dtos;
 using com.Github.Haseoo.DASPP.Main.Dtos;
+using com.Github.Haseoo.DASPP.Main.Exceptions.Workers;
 using com.Github.Haseoo.DASPP.Main.Helper;
 using com.Github.Haseoo.DASPP.Main.Infrastructure.Service;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using com.Github.Haseoo.DASPP.Main.Exceptions.Workers;
 
 namespace com.Github.Haseoo.DASPP.Main.Providers.Service
 {
@@ -39,7 +39,7 @@ namespace com.Github.Haseoo.DASPP.Main.Providers.Service
             }
 
             var packageSize = request.Granulation;
-            if (packageSize < 0)
+            if (packageSize <= 0)
             {
                 packageSize = (vertexCount / workerCount != 0) ? (vertexCount / workerCount) : 1;
             }
