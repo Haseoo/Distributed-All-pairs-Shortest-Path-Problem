@@ -24,7 +24,7 @@ namespace com.Github.Haseoo.DASPP.Worker.Controllers
         {
             if (HttpContext.Request.Cookies.ContainsKey(CookieKey))
             {
-                throw new SessionAlreadyExists();
+                throw new SessionAlreadyExistsException();
             }
             var guid = _taskService.StartTask(graph);
             HttpContext.Response.Cookies.Append(CookieKey, guid.ToString(), new CookieOptions() { HttpOnly = true, SameSite = SameSiteMode.Strict });
@@ -37,7 +37,7 @@ namespace com.Github.Haseoo.DASPP.Worker.Controllers
         {
             if (!HttpContext.Request.Cookies.TryGetValue(CookieKey, out var cookie))
             {
-                throw new SessionNotStarted();
+                throw new SessionNotStartedException();
             }
             if (!Guid.TryParse(cookie, out var guid))
             {
@@ -52,7 +52,7 @@ namespace com.Github.Haseoo.DASPP.Worker.Controllers
         {
             if (!HttpContext.Request.Cookies.TryGetValue(CookieKey, out var cookie))
             {
-                throw new SessionNotStarted();
+                throw new SessionNotStartedException();
             }
             if (!Guid.TryParse(cookie, out var guid))
             {

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using com.Github.Haseoo.DASPP.Main.Exceptions.Workers;
 
 namespace com.Github.Haseoo.DASPP.Main.Providers.Service
 {
@@ -31,6 +32,11 @@ namespace com.Github.Haseoo.DASPP.Main.Providers.Service
             var end = request.GraphDto.GraphSize - 1;
             var vertexCount = end - begin + 1;
             var workerCount = helpers.Count;
+
+            if (workerCount == 0)
+            {
+                throw new NoWorkerPresentException();
+            }
 
             var packageSize = request.Granulation;
             if (packageSize < 0)
@@ -68,7 +74,7 @@ namespace com.Github.Haseoo.DASPP.Main.Providers.Service
             var totalTime = (int)stopWatch.Elapsed.TotalMilliseconds;
             foreach (var clientHelper in helpers)
             {
-                clientHelper.Finalize();
+                clientHelper.FinalizeSession();
             }
             return new MainTaskResponseDto()
             {

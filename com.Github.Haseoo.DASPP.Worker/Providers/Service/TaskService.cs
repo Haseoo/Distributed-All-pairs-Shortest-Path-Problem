@@ -1,4 +1,5 @@
 ﻿using com.Github.Haseoo.DASPP.CoreData.Dtos;
+using com.Github.Haseoo.DASPP.CoreData.Exceptions;
 using com.Github.Haseoo.DASPP.Worker.Exceptions;
 using com.Github.Haseoo.DASPP.Worker.Helpers;
 using com.Github.Haseoo.DASPP.Worker.Infrastructure.Service;
@@ -20,7 +21,7 @@ namespace com.Github.Haseoo.DASPP.Worker.Providers.Service
             var helper = new GraphHelper(graph);
             if (_graphHelpers.ContainsKey(helper.Id))
             {
-                throw new SessionAlreadyExists();
+                throw new SessionAlreadyExistsException();
             }
             _graphHelpers.TryAdd(helper.Id, helper);
             return helper.Id;
@@ -30,7 +31,7 @@ namespace com.Github.Haseoo.DASPP.Worker.Providers.Service
         {
             if (!_graphHelpers.ContainsKey(graphGuid))
             {
-                throw new SessionNotStarted();
+                throw new SessionNotStartedException();
             }
             _graphHelpers.Remove(graphGuid);
         }
@@ -39,7 +40,7 @@ namespace com.Github.Haseoo.DASPP.Worker.Providers.Service
         {
             if (!_graphHelpers.ContainsKey(graphId))
             {
-                throw new Exception("TODO");
+                throw new NotFoundException($"Graph with id: {graphId}");
             }
 
             var stopWatch = Stopwatch.StartNew();

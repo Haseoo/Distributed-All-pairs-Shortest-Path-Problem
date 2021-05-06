@@ -1,6 +1,7 @@
 ﻿using com.Github.Haseoo.DASPP.CoreData.Dtos;
 using com.Github.Haseoo.DASPP.CoreData.Exceptions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Net;
 using System.Text.Json;
@@ -11,10 +12,12 @@ namespace com.Github.Haseoo.DASPP.Main.Infrastructure.Middleware
     public class ErrorHandlerMiddleware
     {
         private readonly RequestDelegate _next;
+        private readonly ILogger<ErrorHandlerMiddleware> _logger;
 
-        public ErrorHandlerMiddleware(RequestDelegate next)
+        public ErrorHandlerMiddleware(RequestDelegate next, ILogger<ErrorHandlerMiddleware> logger)
         {
             _next = next;
+            _logger = logger;
         }
 
         public async Task Invoke(HttpContext context)
@@ -30,6 +33,13 @@ namespace com.Github.Haseoo.DASPP.Main.Infrastructure.Middleware
             catch (NotFoundException notFoundException)
             {
                 await HandleException(context, HttpStatusCode.NotFound, notFoundException);
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = new ErrorResponse("Unhandled server error, contact system admin if error persists");
+                _logger.LogError(ex.Message);
+                _logger.LogError(ex.StackTrace);
+                await context.Response.WriteAsync(JsonSerializer.Serialize(errorResponse));
             }
         }
 
