@@ -21,7 +21,7 @@ namespace com.Github.Haseoo.DASPP.Main.Providers.Service
 
         public MainTaskResponseDto CalculateBestVertex(MainTaskRequestDto request)
         {
-            var averageCalculationTime = 0;
+            var averageCalculationTime = 0L;
             var stopWatch = Stopwatch.StartNew();
 
             var helpers = _workerHostService.GetWorkers()
@@ -62,7 +62,7 @@ namespace com.Github.Haseoo.DASPP.Main.Providers.Service
                 }
 
                 var results = Task.WhenAll(tasks.ToArray()).Result;
-                averageCalculationTime += (int)results.Average(e => e.CalculatingTimeMs);
+                averageCalculationTime += (long)results.Average(e => e.CalculatingTimeMs);
                 var bestPartialResult = results.OrderBy(e => e.RoadCost).FirstOrDefault();
                 if (bestPartialResult?.RoadCost < bestResult.RoadCost)
                 {
@@ -71,7 +71,7 @@ namespace com.Github.Haseoo.DASPP.Main.Providers.Service
             }
 
             stopWatch.Stop();
-            var totalTime = (int)stopWatch.Elapsed.TotalMilliseconds;
+            var totalTime = stopWatch.ElapsedMilliseconds;
             foreach (var clientHelper in helpers)
             {
                 clientHelper.FinalizeSession();

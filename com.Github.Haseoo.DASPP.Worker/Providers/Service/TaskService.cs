@@ -81,7 +81,7 @@ namespace com.Github.Haseoo.DASPP.Worker.Providers.Service
             {
                 RoadCost = bestVertex.RoadCost,
                 Vertex = bestVertex.Vertex,
-                CalculatingTimeMs = stopWatch.Elapsed.Milliseconds
+                CalculatingTimeMs = stopWatch.ElapsedMilliseconds
             };
         }
 
