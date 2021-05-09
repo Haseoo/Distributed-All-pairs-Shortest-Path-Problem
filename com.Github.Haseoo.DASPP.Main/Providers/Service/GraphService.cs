@@ -3,9 +3,14 @@ using com.Github.Haseoo.DASPP.Main.Dtos;
 using com.Github.Haseoo.DASPP.Main.Exceptions.Workers;
 using com.Github.Haseoo.DASPP.Main.Helper;
 using com.Github.Haseoo.DASPP.Main.Infrastructure.Service;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace com.Github.Haseoo.DASPP.Main.Providers.Service
@@ -13,6 +18,7 @@ namespace com.Github.Haseoo.DASPP.Main.Providers.Service
     public class GraphService : IGraphService
     {
         private readonly IWorkerHostService _workerHostService;
+
 
         public GraphService(IWorkerHostService workerHostService)
         {
@@ -95,5 +101,16 @@ namespace com.Github.Haseoo.DASPP.Main.Providers.Service
                 CommunicationTimeMs = totalTime - averageCalculationTime
             };
         }
+
+        public Stream GenerateGraph(int numberOfNodes)
+        {
+            var graphGenerator = new GraphGenerator(numberOfNodes, 100);
+            var graph = graphGenerator.GenerateGraph();
+            var jsonGraph = JsonSerializer.Serialize(graph);
+            var byteArray = Encoding.ASCII.GetBytes(jsonGraph);
+            var stream = new MemoryStream(byteArray);
+            return stream;
+        }
+
     }
 }
