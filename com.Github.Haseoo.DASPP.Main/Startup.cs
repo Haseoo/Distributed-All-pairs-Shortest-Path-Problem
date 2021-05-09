@@ -32,6 +32,7 @@ namespace com.Github.Haseoo.DASPP.Main
                 .AddFluentValidation(s =>
                     s.RegisterValidatorsFromAssemblyContaining<GraphDto>()
                         .RegisterValidatorsFromAssemblyContaining<MainTaskRequestDtoValidator>());
+            services.AddMvc();
             services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new OpenApiInfo { Title = Configuration["ProjectTitle"], Version = "v1" });
@@ -94,6 +95,8 @@ namespace com.Github.Haseoo.DASPP.Main
             app.UseAuthorization();
 
             app.UseMiddleware<ErrorHandlerMiddleware>();
+
+            app.UseStaticFiles();
 
             app.UseEndpoints(endpoints =>
             {

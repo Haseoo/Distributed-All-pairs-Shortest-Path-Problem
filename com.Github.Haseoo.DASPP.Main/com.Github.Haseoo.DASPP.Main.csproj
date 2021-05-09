@@ -16,5 +16,9 @@
     <ProjectReference Include="..\com.Github.Haseoo.DASPP.CoreData\com.Github.Haseoo.DASPP.CoreData.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\img\loading.gif" />
+  </ItemGroup>
+
 
 </Project>

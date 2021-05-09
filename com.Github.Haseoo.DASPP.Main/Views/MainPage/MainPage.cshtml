@@ -1,0 +1,233 @@
+﻿@model IEnumerable<com.Github.Haseoo.DASPP.CoreData.Dtos.WorkerHostInfo>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distributed All-Pairs Shortest Path Problem</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <style>
+        body {
+            font-family: "Comic Sans MS", "Comic Sans", cursive !important;
+        }
+
+        main {
+            background-color: antiquewhite;
+            margin-left: auto;
+            margin-right: auto;
+            max-width: 75%;
+            margin-bottom: 2em;
+        }
+
+        header {
+            text-align: center;
+            font-size: 24pt;
+            font-weight: bold;
+            color: rgb(37, 179, 37);
+            padding: 20px 0;
+            border-style: dashed;
+            border-color: chocolate;
+            border-width: 2px;
+        }
+
+        .card {
+            background-color: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .card-header {
+            background-color: rgb(248, 210, 139) !important;
+        }
+
+        .qty-smb {
+            margin-left: 5px;
+        }
+
+        #mynetwork {
+            width: 100%;
+            height: 400px;
+            border: 1px solid lightgray;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <header>
+            Distributed All-Pairs Shortest Path Problem
+        </header>
+        <section class="card">
+            <div class="card-header h5">
+                Server status
+            </div>
+            <div class="card-body">
+                <p class="card-text">Currently registered workers:</p>
+                <ul>
+                    @foreach (var item in Model)
+                    {
+                        <li><a href="@item.Uri">@item.Uri</a></li>
+                    }
+                </ul>
+            </div>
+        </section>
+        <section class="card">
+            <div class="card-header h5">
+                Graph generation
+            </div>
+            <div class="card-body">
+                <p class="card-text">
+                    Enter the number of nodes of the graph to be generated (for large numbers, the
+                    generation process may take a while):
+                </p>
+                <form class="form-inline" id="graph-generation-form">
+                    <label for="quantity">Quantity:</label>
+                    <input type="number" id="nodeQty" name="quantity" min="1" class="form-control-sm" required>
+                    <input type="submit" class="btn btn-success qty-smb" value="Submit" />
+                </form>
+            </div>
+        </section>
+        <section class="card">
+            <div class="card-header h5">
+                Calculate the best vertex
+            </div>
+            <div class="card-body" id="calcForm">
+                <form id="best-vertex-form">
+                    <div class="form-group">
+                        <label for="graphJson">Graph json: </label>
+                        <input type="file" class="form-control-file" id="graphJson" accept=".json" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="granulation">Granulation (enter 0 for it to be calculated automatically):</label>
+                        <input type="number" id="granulation" name="granulation" min="0" class="form-control">
+                    </div>
+                    <input type="submit" class="btn btn-success" value="Submit" />
+                </form>
+            </div>
+            <div class="card-body" id="error">
+                <p class="card-text text-danger">An error ocurred!</p>
+                <p id="errorMsg"></p>
+            </div>
+            <div class="card-body" id="calculating">
+                <p class="card-text">Calculating... please wait</p>
+                <div class="d-flex justify-content-center">
+                    <img width="100px" height="100px" src="~/img/loading.gif" alt="loading...">
+                </div>
+            </div>
+            <div class="card-body" id="success">
+                <p class="card-text">Results:</p>
+                <ul>
+                    <li>Best vertex index: <span id="bestVertex"></span></li>
+                    <li>Best vertex road cost: <span id="roadCost"></span></li>
+                    <li>Total time: <span id="totalTime"></span>ms</li>
+                    <li>Calculation time: <span id="calcTime"></span>ms</li>
+                    <li>Communication time: <span id="commTime"></span>ms</li>
+                </ul>
+                <div id="mynetwork" class="container"></div>
+            </div>
+        </section>
+    </main>
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+<script type="text/javascript">
+    $("#calculating").hide();
+    $("#error").hide();
+    $("#success").hide();
+    $("#mynetwork").hide();
+    $("#graph-generation-form").submit(function (event) {
+        var qty = $('#nodeQty').val();
+        event.preventDefault();
+        window.location.href = `/api/graph/generating?numberOfNodes=${qty}`;
+    });
+    $("#best-vertex-form").submit(function (event) {
+        var myFile = $('#graphJson').prop('files');
+        var reader = new FileReader();
+        reader.addEventListener('load', (event) => {
+            sendGraph(event.target.result);
+        });
+        reader.addEventListener('error', () => {
+            alert("Could not read the graph file");
+        });
+        reader.readAsText(myFile[0]);
+        event.preventDefault();
+    })
+    function sendGraph(graphJson) {
+        var graphDto = JSON.parse(graphJson);
+        var granulation = $('#granulation').val();
+        var request = { "GraphDto": graphDto, "Granulation": Number.parseInt(granulation) };
+        $("#calcForm").hide();
+        $("#calculating").show();
+        $.ajax({
+            url: "http://localhost:8080/api/graph",
+            timeout: 0,
+            method: "PUT",
+            data: JSON.stringify(request),
+            contentType: "application/json",
+            dataType: "json",
+            success: (result) => handleSuccess(result, request.GraphDto.AdjMatrix),
+            error: (xhr, status, error) => handleError(xhr, status, error)
+        });
+    }
+
+    function handleError(xhr, status, error) {
+        $("#calculating").hide();
+        if (!error) {
+            $("#errorMsg").html("Unknown error");
+        } else {
+            var err = JSON.parse(xhr.responseText);
+            console.log(err);
+            if (err.Message) {
+                $("#errorMsg").html(err.Message);
+            }
+            if (err.errors) {
+                $("#errorMsg").html("<p>" + err.errors[""].join("</p><p>") + "</p>");
+            }
+        }
+        $("#error").show();
+    }
+
+    function handleSuccess(response, graph) {
+        if (graph.length < 26) {
+            var network = new vis.Network(document.getElementById("mynetwork"),
+                {
+                    nodes: getNodes(graph, response.bestVertexIndex),
+                    edges: getEdges(graph)
+                },
+                { physics: false });
+            $("#mynetwork").show();
+        }
+        $("#calculating").hide();
+        $("#bestVertex").html(response.bestVertexIndex);
+        $("#roadCost").html(response.bestVertexRoadCost);
+        $("#totalTime").html(response.totalTaskTimeMs);
+        $("#calcTime").html(response.calculationTimeMs);
+        $("#commTime").html(response.communicationTimeMs);
+        $("#success").show();
+    }
+
+    function getNodes(graph, best) {
+        var nodes = [];
+        for (var i = 0; i < graph.length; i++) {
+            nodes.push({ "id": i, "label": i.toString(), "color": (i === best) ? "orangered" : "rgb(37, 179, 37)" });
+        }
+        return nodes;
+    }
+
+    function getEdges(graph) {
+        var edges = [];
+        for (var i = 0; i < graph.length; i++) {
+            for (var j = i + 1; j < graph.length; j++) {
+                if (graph[i][j] !== 0 && !edges.includes({ from: j, to: i, label: graph[i][j].toString() })) {
+                    edges.push({ from: i, to: j, label: graph[i][j].toString() });
+                }
+            }
+        }
+        for (var i = 0; i < edges.length; i++) {
+            edges[i].color = "rgb(37, 179, 37)";
+        }
+        return edges;
+    }
+</script>
+</html>
