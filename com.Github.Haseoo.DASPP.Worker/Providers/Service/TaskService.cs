@@ -3,6 +3,7 @@ using com.Github.Haseoo.DASPP.CoreData.Exceptions;
 using com.Github.Haseoo.DASPP.Worker.Exceptions;
 using com.Github.Haseoo.DASPP.Worker.Helpers;
 using com.Github.Haseoo.DASPP.Worker.Infrastructure.Service;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -15,6 +16,12 @@ namespace com.Github.Haseoo.DASPP.Worker.Providers.Service
     public class TaskService : ITaskService
     {
         private readonly IDictionary<Guid, GraphHelper> _graphHelpers = new ConcurrentDictionary<Guid, GraphHelper>();
+        private readonly ILogger<TaskService> _logger;
+
+        public TaskService(ILogger<TaskService> logger)
+        {
+            _logger = logger;
+        }
 
         public Guid StartTask(GraphDto graph)
         {
@@ -24,6 +31,7 @@ namespace com.Github.Haseoo.DASPP.Worker.Providers.Service
                 throw new SessionAlreadyExistsException();
             }
             _graphHelpers.TryAdd(helper.Id, helper);
+            _logger.LogDebug("TASK REGISTERED");
             return helper.Id;
         }
 
@@ -42,6 +50,8 @@ namespace com.Github.Haseoo.DASPP.Worker.Providers.Service
             {
                 throw new NotFoundException($"Graph with id: {graphId}");
             }
+
+            _logger.LogInformation($"From {begin} to {end}");
 
             var stopWatch = Stopwatch.StartNew();
 
@@ -77,11 +87,13 @@ namespace com.Github.Haseoo.DASPP.Worker.Providers.Service
 
             stopWatch.Stop();
 
+            _logger.LogInformation($"Calculation: {stopWatch.ElapsedMilliseconds}");
+
             return new ResultDto()
             {
                 RoadCost = bestVertex.RoadCost,
                 Vertex = bestVertex.Vertex,
-                CalculatingTimeMs = stopWatch.Elapsed.Milliseconds
+                CalculatingTimeMs = stopWatch.ElapsedMilliseconds
             };
         }
 

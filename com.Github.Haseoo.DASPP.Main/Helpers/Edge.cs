@@ -1,4 +1,4 @@
-﻿namespace com.Github.Haseoo.DASPP.Main.Helper
+﻿namespace com.Github.Haseoo.DASPP.Main.Helpers
 {
     public class Edge
     {

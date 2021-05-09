@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace com.Github.Haseoo.DASPP.Main.Helper
+namespace com.Github.Haseoo.DASPP.Main.Helpers
 {
     public class GraphGenerator
     {

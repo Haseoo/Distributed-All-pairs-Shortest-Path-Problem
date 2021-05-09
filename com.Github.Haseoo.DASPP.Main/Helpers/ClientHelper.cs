@@ -6,19 +6,21 @@ using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace com.Github.Haseoo.DASPP.Main.Helper
+namespace com.Github.Haseoo.DASPP.Main.Helpers
 {
     public class ClientHelper
     {
         private readonly RestClient _restClient;
         private readonly WorkerHostInfo _workerHost;
 
-        public ClientHelper(WorkerHostInfo worker,
+        private ClientHelper(WorkerHostInfo worker,
             GraphDto graph)
         {
             _restClient = new RestClient(worker.Uri + "/api")
             {
-                CookieContainer = new CookieContainer()
+                CookieContainer = new CookieContainer(),
+                ReadWriteTimeout = 500000,
+                Timeout = 500000
             };
             _workerHost = worker;
 
@@ -30,6 +32,14 @@ namespace com.Github.Haseoo.DASPP.Main.Helper
             {
                 ThrowExceptionOnNotSuccessfulResponse(response);
             }
+        }
+
+        public static async Task<ClientHelper> AsyncNew(WorkerHostInfo worker,
+            GraphDto graph)
+        {
+            var task = new Task<ClientHelper>(() => new ClientHelper(worker, graph));
+            task.Start();
+            return await task;
         }
 
         public async Task<ResultDto> CalculateFor(int begin, int end)
