@@ -62,6 +62,14 @@ namespace com.Github.Haseoo.DASPP.Main
             services.AddSingleton(new JsonDeserializer());
             services.AddSingleton<IWorkerHostService, WorkerHostService>();
             services.AddSingleton<IGraphService, GraphService>();
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: "AnyOrigin",
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin();
+                    });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -74,6 +82,12 @@ namespace com.Github.Haseoo.DASPP.Main
             app.UseSwagger();
             app.UseSwaggerUI(options =>
                 options.SwaggerEndpoint("/swagger/v1/swagger.json", Configuration["ProjectTitle"]));
+
+            app.UseCors(x => x
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .SetIsOriginAllowed(origin => true) // allow any origin
+                .AllowCredentials()); // allow credentials
 
             app.UseRouting();
 

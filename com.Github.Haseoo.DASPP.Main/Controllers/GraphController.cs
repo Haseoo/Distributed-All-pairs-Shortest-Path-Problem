@@ -2,6 +2,7 @@
 using System.Text;
 using com.Github.Haseoo.DASPP.Main.Dtos;
 using com.Github.Haseoo.DASPP.Main.Infrastructure.Service;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 
