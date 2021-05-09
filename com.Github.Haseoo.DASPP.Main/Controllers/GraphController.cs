@@ -1,6 +1,4 @@
-﻿using System.IO;
-using System.Text;
-using com.Github.Haseoo.DASPP.Main.Dtos;
+﻿using com.Github.Haseoo.DASPP.Main.Dtos;
 using com.Github.Haseoo.DASPP.Main.Infrastructure.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
@@ -23,6 +21,7 @@ namespace com.Github.Haseoo.DASPP.Main.Controllers
         {
             return Ok(_graphService.CalculateBestVertex(request));
         }
+
         [HttpGet("generating")]
         public FileStreamResult GenerateGraph(int numberOfNodes)
         {
