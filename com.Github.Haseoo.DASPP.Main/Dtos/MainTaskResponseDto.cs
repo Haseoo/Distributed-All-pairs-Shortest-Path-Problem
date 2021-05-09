@@ -4,8 +4,8 @@
     {
         public int BestVertexIndex { get; set; }
         public int BestVertexRoadCost { get; set; }
-        public long TotalTaskTimeMs { get; set; }
-        public long CalculationTimeMs { get; set; }
-        public long CommunicationTimeMs { get; set; }
+        public int TotalTaskTimeMs { get; set; }
+        public int CalculationTimeMs { get; set; }
+        public int CommunicationTimeMs { get; set; }
     }
 }

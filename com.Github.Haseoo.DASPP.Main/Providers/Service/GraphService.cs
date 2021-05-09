@@ -27,18 +27,17 @@ namespace com.Github.Haseoo.DASPP.Main.Providers.Service
 
         public MainTaskResponseDto CalculateBestVertex(MainTaskRequestDto request)
         {
+            var averageCalculationTime = 0;
             var stopWatch = Stopwatch.StartNew();
 
-            var helpersTasks = _workerHostService.GetWorkers()
-                .Select(e => ClientHelper.AsyncNew(e, request.GraphDto))
-                .ToArray();
-
-            var helpers = Task.WhenAll(helpersTasks).Result;
+            var helpers = _workerHostService.GetWorkers()
+                .Select(e => new ClientHelper(e, request.GraphDto))
+                .ToList();
 
             var begin = 0;
             var end = request.GraphDto.GraphSize - 1;
             var vertexCount = end - begin + 1;
-            var workerCount = helpers.Length;
+            var workerCount = helpers.Count;
 
             if (workerCount == 0)
             {
@@ -51,43 +50,34 @@ namespace com.Github.Haseoo.DASPP.Main.Providers.Service
                 packageSize = (vertexCount / workerCount != 0) ? (vertexCount / workerCount) : 1;
             }
 
-            var tasks = new List<Task<ResultDto>>(workerCount);
-            var results = new List<ResultDto>();
-            var averageCalculationTimeForWorkers = new long[workerCount];
-
-            for (var i = 0; i < workerCount && begin <= end; i++)
+            var bestResult = new ResultDto()
             {
-                var task = begin + packageSize > end ? helpers[i].CalculateFor(begin, end)
-                    : helpers[i].CalculateFor(begin, begin + packageSize);
-                begin += packageSize + 1;
-                tasks.Add(task);
-            }
+                Vertex = -1,
+                RoadCost = int.MaxValue
+            };
 
             while (begin <= end)
             {
-                var readyTaskIndex = Task.WaitAny(tasks.ToArray());
-                var result = tasks[readyTaskIndex].Result;
-                results.Add(result);
-                tasks[readyTaskIndex] = begin + packageSize > end ? helpers[readyTaskIndex].CalculateFor(begin, end)
-                    : helpers[readyTaskIndex].CalculateFor(begin, begin + packageSize);
-                begin += packageSize + 1;
-                averageCalculationTimeForWorkers[readyTaskIndex] += result.CalculatingTimeMs;
-            }
+                var tasks = new List<Task<ResultDto>>();
+                for (var i = 0; i < workerCount && begin <= end; i++)
+                {
+                    var task = begin + packageSize > end ? helpers[i].CalculateFor(begin, end)
+                        : helpers[i].CalculateFor(begin, begin + packageSize);
+                    begin += packageSize + 1;
+                    tasks.Add(task);
+                }
 
-            int index;
-            while ((index = Task.WaitAny(tasks.ToArray())) != -1)
-            {
-                var result = tasks[index].Result;
-                averageCalculationTimeForWorkers[index] += result.CalculatingTimeMs;
-                results.Add(result);
-                tasks.RemoveAt(index);
+                var results = Task.WhenAll(tasks.ToArray()).Result;
+                averageCalculationTime += (int)results.Average(e => e.CalculatingTimeMs);
+                var bestPartialResult = results.OrderBy(e => e.RoadCost).FirstOrDefault();
+                if (bestPartialResult?.RoadCost < bestResult.RoadCost)
+                {
+                    bestResult = bestPartialResult;
+                }
             }
-
-            var bestResult = results.OrderBy(e => e.RoadCost).FirstOrDefault();
-            var averageCalculationTime = (long)averageCalculationTimeForWorkers.Where(e => e > 0).Average();
 
             stopWatch.Stop();
-            var totalTime = stopWatch.ElapsedMilliseconds;
+            var totalTime = (int)stopWatch.Elapsed.TotalMilliseconds;
             foreach (var clientHelper in helpers)
             {
                 clientHelper.FinalizeSession();

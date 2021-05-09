@@ -11,6 +11,6 @@ namespace com.Github.Haseoo.DASPP.CoreData.Dtos
         public int Vertex { get; set; }
 
         [JsonPropertyName("calculatingTimeMs")]
-        public long CalculatingTimeMs { get; set; }
+        public int CalculatingTimeMs { get; set; }
     }
 }
