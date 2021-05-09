@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace com.Github.Haseoo.DASPP.Main.Helper
+﻿namespace com.Github.Haseoo.DASPP.Main.Helper
 {
     public class Edge
     {
