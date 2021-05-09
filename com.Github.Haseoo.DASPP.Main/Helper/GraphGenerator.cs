@@ -8,7 +8,7 @@ namespace com.Github.Haseoo.DASPP.Main.Helper
 {
     public class GraphGenerator
     {
-            public Random Random;
+            private Random Random;
             private readonly int _numberOfNodes;
             private readonly int _maxWeight;
             private const int Density = 10;
@@ -63,9 +63,8 @@ namespace com.Github.Haseoo.DASPP.Main.Helper
                             if (secondNode.Edges.Count != numberOfEdges) continue;
                             graph.Remove(secondNode);
                             finalGraph.Add(secondNode);
-                            Console.WriteLine(secondNode.Index);
                         }
-                    };
+                    }
                     FillEdgesForNode();
                     finalGraph.Add(firstNode);
                 }
@@ -117,7 +116,7 @@ namespace com.Github.Haseoo.DASPP.Main.Helper
 
             private int[][] ConvertToMatrix(List<Node> graph)
             {
-                var graphMatrix = getArrayFilledByZero(graph.Count);
+                var graphMatrix = getTwoDimensionalArray(graph.Count);
                 graph.ForEach(node =>
                 {
                     node.Edges.ForEach(edge =>
@@ -128,7 +127,7 @@ namespace com.Github.Haseoo.DASPP.Main.Helper
                 });
                 return graphMatrix;
             }
-            private int[][] getArrayFilledByZero(int size)
+            private int[][] getTwoDimensionalArray(int size)
             {
                 var array = new int[size][];
                 for (var i = 0; i < size; i++)
