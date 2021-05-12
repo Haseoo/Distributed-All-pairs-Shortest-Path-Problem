@@ -48,7 +48,7 @@ namespace com.Github.Haseoo.DASPP.Main.Providers.Service
                 packageSize = (vertexCount / workerCount != 0) ? (vertexCount / workerCount) : 1;
             }
 
-            var tasks = new List<Task<ResultDto>>(workerCount);
+            var tasks = new List<Task<ResultDto>>();
             var results = new List<ResultDto>();
             var calculationTimeForWorkers = new long[workerCount];
 
