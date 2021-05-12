@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace com.Github.Haseoo.DASPP.Main.Controllers
 {
     [Route("/")]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class MainPageController : Controller
     {
         private readonly IWorkerHostService _workerHostService;

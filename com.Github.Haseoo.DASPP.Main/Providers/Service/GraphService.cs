@@ -50,7 +50,7 @@ namespace com.Github.Haseoo.DASPP.Main.Providers.Service
 
             var tasks = new List<Task<ResultDto>>(workerCount);
             var results = new List<ResultDto>();
-            var averageCalculationTimeForWorkers = new long[workerCount];
+            var calculationTimeForWorkers = new long[workerCount];
 
             for (var i = 0; i < workerCount && begin <= end; i++)
             {
@@ -68,20 +68,25 @@ namespace com.Github.Haseoo.DASPP.Main.Providers.Service
                 tasks[readyTaskIndex] = begin + packageSize > end ? helpers[readyTaskIndex].CalculateFor(begin, end)
                     : helpers[readyTaskIndex].CalculateFor(begin, begin + packageSize);
                 begin += packageSize + 1;
-                averageCalculationTimeForWorkers[readyTaskIndex] += result.CalculatingTimeMs;
+                calculationTimeForWorkers[readyTaskIndex] += result.CalculatingTimeMs;
             }
 
             int index;
             while ((index = Task.WaitAny(tasks.ToArray())) != -1)
             {
                 var result = tasks[index].Result;
-                averageCalculationTimeForWorkers[index] += result.CalculatingTimeMs;
+                calculationTimeForWorkers[index] += result.CalculatingTimeMs;
                 results.Add(result);
                 tasks.RemoveAt(index);
             }
 
             var bestResult = results.OrderBy(e => e.RoadCost).FirstOrDefault();
-            var averageCalculationTime = (long)averageCalculationTimeForWorkers.Average();
+            var averageCalculationTime = 0L;
+            var workersWithCalculationTimeGreaterThanZero = calculationTimeForWorkers.Where(e => e > 0);
+            if (workersWithCalculationTimeGreaterThanZero.Any())
+            {
+                averageCalculationTime = (long)calculationTimeForWorkers.Average();
+            }
 
             stopWatch.Stop();
             var totalTime = stopWatch.ElapsedMilliseconds;
