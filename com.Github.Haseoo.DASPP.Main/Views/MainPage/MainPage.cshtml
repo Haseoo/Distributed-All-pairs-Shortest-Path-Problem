@@ -160,7 +160,7 @@
         $("#calcForm").hide();
         $("#calculating").show();
         $.ajax({
-            url: "http://localhost:8080/api/graph",
+            url: "api/graph",
             timeout: 0,
             method: "PUT",
             data: JSON.stringify(request),
