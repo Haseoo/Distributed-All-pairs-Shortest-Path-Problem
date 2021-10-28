@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace com.Github.Haseoo.DASPP.Worker
+namespace com.Github.Haseoo.DASPP.Main
 {
     public class Program
     {

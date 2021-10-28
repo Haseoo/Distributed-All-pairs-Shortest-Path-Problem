@@ -1,6 +1,4 @@
 using com.Github.Haseoo.DASPP.CoreData;
-using com.Github.Haseoo.DASPP.CoreData.Dtos;
-using com.Github.Haseoo.DASPP.Main.Dtos.Validators;
 using com.Github.Haseoo.DASPP.Main.Infrastructure.Middleware;
 using com.Github.Haseoo.DASPP.Main.Infrastructure.Service;
 using com.Github.Haseoo.DASPP.Main.Providers.Service;
@@ -28,10 +26,6 @@ namespace com.Github.Haseoo.DASPP.Main
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers()
-                .AddFluentValidation(s =>
-                    s.RegisterValidatorsFromAssemblyContaining<GraphDto>()
-                        .RegisterValidatorsFromAssemblyContaining<MainTaskRequestDtoValidator>());
             services.AddMvc();
             services.AddSwaggerGen(options =>
             {
@@ -39,7 +33,6 @@ namespace com.Github.Haseoo.DASPP.Main
 
                 options.AddSecurityDefinition("ApiKey", new OpenApiSecurityScheme()
                 {
-                    Name = Constants.ApiKeyName,
                     In = ParameterLocation.Header,
                     Type = SecuritySchemeType.ApiKey,
                     Description = "Authorization by x-api-key inside request's header",
@@ -61,7 +54,6 @@ namespace com.Github.Haseoo.DASPP.Main
                 });
             });
             services.AddSingleton(new JsonDeserializer());
-            services.AddSingleton<IWorkerHostService, WorkerHostService>();
             services.AddSingleton<IGraphService, GraphService>();
             services.AddCors(options =>
             {
@@ -91,8 +83,6 @@ namespace com.Github.Haseoo.DASPP.Main
                 .AllowCredentials()); // allow credentials
 
             app.UseRouting();
-
-            app.UseAuthorization();
 
             app.UseMiddleware<ErrorHandlerMiddleware>();
 

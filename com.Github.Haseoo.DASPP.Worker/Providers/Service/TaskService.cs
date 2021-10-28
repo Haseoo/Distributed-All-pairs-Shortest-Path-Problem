@@ -1,8 +1,8 @@
 ﻿using com.Github.Haseoo.DASPP.CoreData.Dtos;
 using com.Github.Haseoo.DASPP.CoreData.Exceptions;
-using com.Github.Haseoo.DASPP.Worker.Exceptions;
-using com.Github.Haseoo.DASPP.Worker.Helpers;
-using com.Github.Haseoo.DASPP.Worker.Infrastructure.Service;
+using com.Github.Haseoo.DASPP.Main.Exceptions;
+using com.Github.Haseoo.DASPP.Main.Helpers;
+using com.Github.Haseoo.DASPP.Main.Infrastructure.Service;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
@@ -11,7 +11,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace com.Github.Haseoo.DASPP.Worker.Providers.Service
+namespace com.Github.Haseoo.DASPP.Main.Providers.Service
 {
     public class TaskService : ITaskService
     {

@@ -1,11 +1,11 @@
 ﻿using com.Github.Haseoo.DASPP.CoreData.Dtos;
-using com.Github.Haseoo.DASPP.Worker.Exceptions;
-using com.Github.Haseoo.DASPP.Worker.Infrastructure.Service;
+using com.Github.Haseoo.DASPP.Main.Exceptions;
+using com.Github.Haseoo.DASPP.Main.Infrastructure.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 
-namespace com.Github.Haseoo.DASPP.Worker.Controllers
+namespace com.Github.Haseoo.DASPP.Main.Controllers
 {
     [ApiController]
     [Route("/api/task")]
@@ -32,7 +32,6 @@ namespace com.Github.Haseoo.DASPP.Worker.Controllers
         }
 
         [HttpPut]
-        //TODO add validator!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         public IActionResult FindBestVertex(FindBestVertexRequestDto request)
         {
             if (!HttpContext.Request.Cookies.TryGetValue(CookieKey, out var cookie))

@@ -1,12 +1,11 @@
-﻿@model IEnumerable<com.Github.Haseoo.DASPP.CoreData.Dtos.WorkerHostInfo>
-
+﻿
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Distributed All-Pairs Shortest Path Problem</title>
+    <title>All-Pairs Shortest Path Problem</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <style>
@@ -56,22 +55,8 @@
 <body>
     <main>
         <header>
-            Distributed All-Pairs Shortest Path Problem
+            All-Pairs Shortest Path Problem 🍐
         </header>
-        <section class="card">
-            <div class="card-header h5">
-                Server status
-            </div>
-            <div class="card-body">
-                <p class="card-text">Currently registered workers:</p>
-                <ul>
-                    @foreach (var item in Model)
-                    {
-                        <li><a href="@item.Uri">@item.Uri</a></li>
-                    }
-                </ul>
-            </div>
-        </section>
         <section class="card">
             <div class="card-header h5">
                 Graph generation
@@ -82,8 +67,8 @@
                     generation process may take a while):
                 </p>
                 <form class="form-inline" id="graph-generation-form">
-                    <label for="quantity">Quantity:</label>
-                    <input type="number" id="nodeQty" name="quantity" min="1" class="form-control-sm" required>
+                    <label for="quantity" style="margin-right:8pt">Quantity:</label>
+                    <input type="number" id="nodeQty" name="quantity" min="1" style="margin-right: 3pt" class="form-control-sm" required>
                     <input type="submit" class="btn btn-success qty-smb" value="Submit" />
                 </form>
             </div>
@@ -99,8 +84,11 @@
                         <input type="file" class="form-control-file" id="graphJson" accept=".json" required>
                     </div>
                     <div class="form-group">
-                        <label for="granulation">Granulation (enter 0 for it to be calculated automatically):</label>
-                        <input type="number" id="granulation" required name="granulation" min="0" class="form-control">
+                        <label for="algorithm">Algorithm:</label>
+                        <select id="algorithm" name="cars" class="form-control">
+                            <option value="0">Dijkstra</option>
+                            <option value="1">Floyd-Warshall</option>
+                        </select>
                     </div>
                     <input type="submit" class="btn btn-success" value="Submit" />
                 </form>
@@ -120,9 +108,7 @@
                 <ul>
                     <li>Best vertex index: <span id="bestVertex"></span></li>
                     <li>Best vertex road cost: <span id="roadCost"></span></li>
-                    <li>Total time: <span id="totalTime"></span>ms</li>
                     <li>Calculation time: <span id="calcTime"></span>ms</li>
-                    <li>Communication time: <span id="commTime"></span>ms</li>
                 </ul>
                 <div id="mynetwork" class="container"></div>
             </div>
@@ -155,8 +141,7 @@
     })
     function sendGraph(graphJson) {
         var graphDto = JSON.parse(graphJson);
-        var granulation = $('#granulation').val();
-        var request = { "GraphDto": graphDto, "Granulation": Number.parseInt(granulation) };
+        var request = { "GraphDto": graphDto, "Algorithm": parseInt($('#algorithm').val()) };
         $("#calcForm").hide();
         $("#calculating").show();
         $.ajax({
@@ -166,7 +151,7 @@
             data: JSON.stringify(request),
             contentType: "application/json",
             dataType: "json",
-            success: (result) => handleSuccess(result, request.GraphDto.AdjMatrix),
+            success: (result) => handleSuccess(result, graphDto.AdjMatrix),
             error: (xhr, status, error) => handleError(xhr, status, error)
         });
     }
@@ -189,7 +174,7 @@
     }
 
     function handleSuccess(response, graph) {
-        if (graph.length < 26) {
+        if (graph.length < 150) {
             var network = new vis.Network(document.getElementById("mynetwork"),
                 {
                     nodes: getNodes(graph, response.bestVertexIndex),

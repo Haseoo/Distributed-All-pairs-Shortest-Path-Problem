@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace com.Github.Haseoo.DASPP.Worker.Exceptions
+namespace com.Github.Haseoo.DASPP.Main.Exceptions
 {
     public class SessionAlreadyExistsException : Exception
     {
