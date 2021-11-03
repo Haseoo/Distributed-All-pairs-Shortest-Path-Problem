@@ -7,6 +7,7 @@ namespace com.Github.Haseoo.DASPP.Main.Infrastructure.Service
     public interface IGraphService
     {
         BestVertexResponseDto CalculateBestVertexDijkstra(GraphDto graphDto);
+        BestVertexResponseDto CalculateBestVertexFloydWarshall(GraphDto graphDto);
 
         Stream GenerateGraph(int numberOfNodes);
     }

@@ -20,7 +20,8 @@ namespace com.Github.Haseoo.DASPP.Main.Controllers
         [HttpPut]
         public IActionResult CalculateBestVertex(FindBestVertexRequestDto request)
         {
-            return Ok(request.Algorithm == Algorithm.Dijkstra ? _graphService.CalculateBestVertexDijkstra(request.GraphDto) : null);
+            return Ok(request.Algorithm == Algorithm.Dijkstra ? _graphService.CalculateBestVertexDijkstra(request.GraphDto) : 
+                _graphService.CalculateBestVertexFloydWarshall(request.GraphDto));
         }
 
         [HttpGet("generating")]
