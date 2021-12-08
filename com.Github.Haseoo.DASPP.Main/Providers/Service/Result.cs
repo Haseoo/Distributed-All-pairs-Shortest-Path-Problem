@@ -1,4 +1,4 @@
-﻿namespace com.Github.Haseoo.DASPP.Worker.Helpers
+﻿namespace com.Github.Haseoo.DASPP.Main.Providers.Service
 {
     public class Result
     {

@@ -1,6 +1,6 @@
-﻿using com.Github.Haseoo.DASPP.CoreData.Dtos;
+﻿using System;
+using com.Github.Haseoo.DASPP.CoreData.Dtos;
 using com.Github.Haseoo.DASPP.Main.Dtos;
-using com.Github.Haseoo.DASPP.Main.Exceptions.Workers;
 using com.Github.Haseoo.DASPP.Main.Helpers;
 using com.Github.Haseoo.DASPP.Main.Infrastructure.Service;
 using System.Collections.Generic;
@@ -15,92 +15,66 @@ namespace com.Github.Haseoo.DASPP.Main.Providers.Service
 {
     public class GraphService : IGraphService
     {
-        private readonly IWorkerHostService _workerHostService;
-
-        public GraphService(IWorkerHostService workerHostService)
-        {
-            _workerHostService = workerHostService;
-        }
-
-        public MainTaskResponseDto CalculateBestVertex(MainTaskRequestDto request)
+        public BestVertexResponseDto CalculateBestVertexDijkstra(GraphDto graphDto)
         {
             var stopWatch = Stopwatch.StartNew();
 
-            var helpersTasks = _workerHostService.GetWorkers()
-                .Select(e => ClientHelper.AsyncNew(e, request.GraphDto))
-                .ToArray();
+            var results = new List<Result>();
 
-            var helpers = Task.WhenAll(helpersTasks).Result;
+            var bestVertex = new Result(int.MaxValue, -1);
 
-            var begin = 0;
-            var end = request.GraphDto.GraphSize - 1;
-            var vertexCount = end - begin + 1;
-            var workerCount = helpers.Length;
-
-            if (workerCount == 0)
+            for (var i = 0; i < graphDto.GraphSize; i++)
             {
-                throw new NoWorkerPresentException();
+                results.Add(new Result(Dijkstra(i, graphDto), i));
             }
 
-            var packageSize = request.Granulation;
-            if (packageSize <= 0)
+            foreach (var result in
+                from result in results
+                where result.RoadCost < bestVertex.RoadCost
+                select result)
             {
-                packageSize = (vertexCount / workerCount != 0) ? (vertexCount / workerCount) : 1;
-            }
-
-            var tasks = new List<Task<ResultDto>>();
-            var results = new List<ResultDto>();
-            var calculationTimeForWorkers = new long[workerCount];
-
-            for (var i = 0; i < workerCount && begin <= end; i++)
-            {
-                var task = begin + packageSize > end ? helpers[i].CalculateFor(begin, end)
-                    : helpers[i].CalculateFor(begin, begin + packageSize);
-                begin += packageSize + 1;
-                tasks.Add(task);
-            }
-
-            while (begin <= end)
-            {
-                var readyTaskIndex = Task.WaitAny(tasks.ToArray());
-                var result = tasks[readyTaskIndex].Result;
-                results.Add(result);
-                tasks[readyTaskIndex] = begin + packageSize > end ? helpers[readyTaskIndex].CalculateFor(begin, end)
-                    : helpers[readyTaskIndex].CalculateFor(begin, begin + packageSize);
-                begin += packageSize + 1;
-                calculationTimeForWorkers[readyTaskIndex] += result.CalculatingTimeMs;
-            }
-
-            int index;
-            while ((index = Task.WaitAny(tasks.ToArray())) != -1)
-            {
-                var result = tasks[index].Result;
-                calculationTimeForWorkers[index] += result.CalculatingTimeMs;
-                results.Add(result);
-                tasks.RemoveAt(index);
-            }
-
-            var bestResult = results.OrderBy(e => e.RoadCost).FirstOrDefault();
-            var averageCalculationTime = 0L;
-            var workersWithCalculationTimeGreaterThanZero = calculationTimeForWorkers.Where(e => e > 0);
-            if (workersWithCalculationTimeGreaterThanZero.Any())
-            {
-                averageCalculationTime = (long)calculationTimeForWorkers.Average();
+                bestVertex = result;
             }
 
             stopWatch.Stop();
-            var totalTime = stopWatch.ElapsedMilliseconds;
-            foreach (var clientHelper in helpers)
+
+            return new BestVertexResponseDto()
             {
-                clientHelper.FinalizeSession();
+                BestVertexIndex = bestVertex.Vertex,
+                BestVertexRoadCost = bestVertex.RoadCost,
+                CalculationTimeMs = stopWatch.ElapsedMilliseconds
+            };
+        }
+
+        public BestVertexResponseDto CalculateBestVertexFloydWarshall(GraphDto graphDto)
+        {
+            var stopWatch = Stopwatch.StartNew();
+            var resultMatrix = ResultWarshallMatrix(WarshallFirstMatrix(graphDto), graphDto);
+            var results = new List<Result>();
+            var bestVertex = new Result(int.MaxValue, -1);
+            for (var i = 0; i < graphDto.GraphSize; i++)
+            {
+                var sum = 0;
+                for (var j = 0; j < graphDto.GraphSize; j++)
+                {
+                    sum += resultMatrix[i, j];
+                }
+
+                results.Add(new Result(sum, i));
             }
-            return new MainTaskResponseDto()
+
+            foreach (var vertex in results.Where(vertex => vertex.RoadCost < bestVertex.RoadCost))
             {
-                BestVertexIndex = bestResult.Vertex,
-                BestVertexRoadCost = bestResult.RoadCost,
-                CalculationTimeMs = averageCalculationTime,
-                TotalTaskTimeMs = totalTime,
-                CommunicationTimeMs = totalTime - averageCalculationTime
+                bestVertex = vertex;
+            }
+            
+            stopWatch.Stop();
+
+            return new BestVertexResponseDto()
+            {
+                BestVertexIndex = bestVertex.Vertex,
+                BestVertexRoadCost = bestVertex.RoadCost,
+                CalculationTimeMs = stopWatch.ElapsedMilliseconds
             };
         }
 
@@ -112,6 +86,144 @@ namespace com.Github.Haseoo.DASPP.Main.Providers.Service
             var byteArray = Encoding.ASCII.GetBytes(jsonGraph);
             var stream = new MemoryStream(byteArray);
             return stream;
+        }
+
+        private static int Dijkstra(int vertex, GraphDto graphDto)
+        {
+            var elements = new List<Element>();
+
+            for (var i = 0; i < graphDto.GraphSize; i++)
+            {
+                elements.Add(new Element());
+                elements[i].Distance = int.MaxValue;
+                elements[i].Previous = -1;
+                elements[i].IsCounted = false;
+            }
+
+            elements[vertex].Distance = 0;
+
+            while (elements.Any(x => !x.IsCounted))
+            {
+                var u = FindMinDistanceElement(elements);
+
+                elements[u].IsCounted = true;
+
+                for (var i = 0; i < graphDto.GraphSize; i++)
+                {
+                    if (Adjacent(u, i, graphDto) && u != i)
+                    {
+                        if (elements[i].Distance > (Length(u, i, graphDto) + elements[u].Distance))
+                        {
+                            elements[i].Distance = Length(u, i, graphDto) + elements[u].Distance;
+                            elements[i].Previous = u;
+                        }
+                    }
+                }
+            }
+
+            return GetDistanceSum(elements);
+        }
+
+        private static bool Adjacent(int vertexA, int vertexB, GraphDto graphDto)
+        {
+            return (graphDto[vertexA, vertexB] > 0);
+        }
+
+        private static bool Adjacent(int vertexA, int vertexB, int[,] matrix)
+        {
+            return matrix[vertexA, vertexB] > 0 && matrix[vertexA, vertexB] != Int32.MaxValue;
+        }
+
+        private static int Length(int vertexU, int vertexV, GraphDto graphDto)
+        {
+            return graphDto[vertexU, vertexV];
+        }
+
+        private static int Length(int vertexU, int vertexV, int[,] matrix)
+        {
+            return matrix[vertexU, vertexV];
+        }
+
+        private static int FindMinDistanceElement(IList<Element> elements)
+        {
+            var element = new Element() {Distance = int.MaxValue};
+            var index = -1;
+
+            foreach (var item in elements)
+            {
+                if (item.Distance < element.Distance && !item.IsCounted)
+                {
+                    element = item;
+                    index = elements.IndexOf(item);
+                }
+            }
+
+            return index;
+        }
+
+        private static int GetDistanceSum(IEnumerable<Element> elements)
+        {
+            return elements.Sum(item => item.Distance);
+        }
+
+        private static int[,] WarshallFirstMatrix(GraphDto graphDto)
+        {
+            var firstMatrix = new int[graphDto.GraphSize, graphDto.GraphSize];
+            for (var i = 0; i < graphDto.GraphSize; i++)
+            {
+                for (var j = 0; j < graphDto.GraphSize; j++)
+                {
+                    if (i == j)
+                    {
+                        firstMatrix[i, j] = 0;
+                    }
+                    else
+                    {
+                        if (Adjacent(i, j, graphDto))
+                        {
+                            firstMatrix[i, j] = Length(i, j, graphDto);
+                        }
+                        else
+                        {
+                            firstMatrix[i, j] = int.MaxValue;
+                        }
+                    }
+                }
+            }
+            return firstMatrix;
+        }
+
+        private static int[,] ResultWarshallMatrix(int[,] firstMatrix, GraphDto graphDto)
+        {
+            var resultMatrix = firstMatrix;
+            for (var k = 0; k < graphDto.GraphSize; k++)
+            {
+                for (var i = 0; i < graphDto.GraphSize; i++)
+                {
+                    for (var j = 0; j < graphDto.GraphSize; j++)
+                    {
+                        if (i == k || j == k || i == j) continue;
+                        if (FoundShorterPath(i, j, k, resultMatrix))
+                        {
+                            resultMatrix[i, j] = Length(i, k, resultMatrix) + Length(k, j, resultMatrix);
+                        }
+                    }
+                }
+            }
+            return resultMatrix;
+        }
+
+        private static bool FoundShorterPath(int i, int j, int k, int[,] matrix)
+        {
+            if (!Adjacent(i, j, matrix))
+            {
+                return Adjacent(i, k, matrix) && Adjacent(j, k, matrix);
+            }
+
+            if (!Adjacent(i, k, matrix) || !Adjacent(j, k, matrix))
+                return false;
+
+            return Length(i, j, matrix) > Length(i, k, matrix) + Length(k, j, matrix);
         }
     }
 }

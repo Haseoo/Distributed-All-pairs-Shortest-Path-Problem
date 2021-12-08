@@ -1,4 +1,5 @@
-﻿using com.Github.Haseoo.DASPP.Main.Dtos;
+﻿using com.Github.Haseoo.DASPP.CoreData.Dtos;
+using com.Github.Haseoo.DASPP.Main.Dtos;
 using com.Github.Haseoo.DASPP.Main.Infrastructure.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
@@ -17,9 +18,10 @@ namespace com.Github.Haseoo.DASPP.Main.Controllers
         private readonly IGraphService _graphService;
 
         [HttpPut]
-        public IActionResult CalculateBestVertex(MainTaskRequestDto request)
+        public IActionResult CalculateBestVertex(FindBestVertexRequestDto request)
         {
-            return Ok(_graphService.CalculateBestVertex(request));
+            return Ok(request.Algorithm == Algorithm.Dijkstra ? _graphService.CalculateBestVertexDijkstra(request.GraphDto) : 
+                _graphService.CalculateBestVertexFloydWarshall(request.GraphDto));
         }
 
         [HttpGet("generating")]
